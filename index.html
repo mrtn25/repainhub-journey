@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RepairHub – Customer Journey</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0c14;--card:#12151f;--card2:#181c29;--border:#252a3a;
+  --blue:#3b82f6;--blue2:#1d4ed8;--green:#22c55e;--orange:#f97316;
+  --red:#ef4444;--yellow:#eab308;--text:#f1f5f9;--muted:#94a3b8;
+  --radius:16px;--font:'Inter',sans-serif;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font);background:var(--bg);color:var(--text);display:flex;flex-direction:column;align-items:center;justify-content:center}
+#app{width:100vw;height:100vh;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
+#bg-img{position:absolute;inset:0;background-size:cover;background-position:center;transition:opacity .6s ease;z-index:0}
+#bg-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,12,20,.97) 0%,rgba(10,12,20,.6) 50%,rgba(10,12,20,.35) 100%);z-index:1}
+#content{position:relative;z-index:2;width:100%;max-width:780px;padding:24px 20px 32px;display:flex;flex-direction:column;align-items:center;gap:0}
+#progress-wrap{width:100%;max-width:580px;margin-bottom:20px}
+.prog-label{display:flex;justify-content:space-between;margin-bottom:8px;font-size:12px;color:var(--muted)}
+.prog-bar-bg{height:4px;background:var(--border);border-radius:99px;overflow:hidden}
+.prog-bar-fill{height:100%;background:var(--blue);border-radius:99px;transition:width .5s ease}
+#scene-card{background:rgba(18,21,31,.85);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:var(--radius);padding:32px 36px 28px;width:100%;text-align:center}
+.scene-icon{font-size:52px;margin-bottom:14px;display:block;animation:pop .4s ease}
+@keyframes pop{0%{transform:scale(.6);opacity:0}80%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+.scene-title{font-size:26px;font-weight:800;line-height:1.2;margin-bottom:10px;letter-spacing:-.4px}
+.scene-visual{font-size:72px;line-height:1;margin:16px 0;display:block;animation:floatin 3s ease-in-out infinite}
+@keyframes floatin{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.scene-text{font-size:15px;line-height:1.65;color:var(--muted);margin-bottom:22px;max-width:540px;margin-left:auto;margin-right:auto}
+.scene-text strong{color:var(--text)}
+.info-box{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:18px;text-align:left;font-size:13.5px;line-height:1.6}
+.info-box .row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border)}
+.info-box .row:last-child{border-bottom:none}
+.info-box .row .label{color:var(--muted)}
+.info-box .row .val{font-weight:600}
+.val-green{color:var(--green)}.val-orange{color:var(--orange)}.val-red{color:var(--red)}.val-blue{color:var(--blue)}
+.repair-stages{display:flex;gap:8px;margin:16px 0;justify-content:center;flex-wrap:wrap}
+.stage{padding:6px 14px;border-radius:99px;font-size:12px;font-weight:600;background:var(--card2);border:1px solid var(--border);color:var(--muted);transition:all .4s}
+.stage.active{background:#1d4ed8;border-color:#3b82f6;color:white}
+.stage.done{background:#14532d;border-color:#22c55e;color:#86efac}
+#choices{display:flex;flex-direction:column;gap:10px;width:100%;margin-top:4px}
+.choice-btn{background:var(--card2);border:1.5px solid var(--border);color:var(--text);border-radius:12px;padding:14px 20px;font-size:14px;font-weight:500;cursor:pointer;text-align:left;transition:all .2s;display:flex;align-items:center;gap:12px;font-family:var(--font)}
+.choice-btn:hover{background:var(--blue2);border-color:var(--blue);transform:translateX(4px)}
+.choice-btn .emoji{font-size:22px;flex-shrink:0}
+.choice-btn .text{flex:1}
+.choice-btn .text .main{display:block;font-weight:600}
+.choice-btn .text .sub{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.choice-btn:hover .text .sub{color:#93c5fd}
+.green-btn{background:var(--green);color:#052e16;border-color:var(--green)}
+.green-btn:hover{background:#16a34a;border-color:#16a34a}
+.om-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);border-radius:99px;padding:4px 12px;font-size:11px;color:#93c5fd;font-weight:600;letter-spacing:.3px;margin-bottom:14px}
+#brand{position:absolute;top:20px;left:50%;transform:translateX(-50%);z-index:10;display:flex;align-items:center;gap:10px}
+.brand-logo{font-size:20px;font-weight:800;letter-spacing:-.5px;color:var(--text)}
+.brand-logo span{color:var(--blue)}
+.brand-tag{font-size:11px;color:var(--muted);background:var(--card);border:1px solid var(--border);border-radius:99px;padding:3px 10px}
+#dots{display:flex;gap:8px;justify-content:center;margin-top:18px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .3s}
+.dot.active{background:var(--blue);width:22px;border-radius:99px}
+.dot.done{background:var(--green)}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="bg-img"></div>
+  <div id="bg-overlay"></div>
+  <div id="brand">
+    <div class="brand-logo">Repair<span>Hub</span></div>
+    <div class="brand-tag">Customer Journey</div>
+  </div>
+  <div id="content">
+    <div id="progress-wrap">
+      <div class="prog-label"><span id="prog-step">Step 1 of 9</span><span id="prog-pct">0%</span></div>
+      <div class="prog-bar-bg"><div class="prog-bar-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div id="scene-card"></div>
+    <div id="dots"></div>
+  </div>
+</div>
+<script>
+const SCENES=[
+{bg:"linear-gradient(135deg,#0a0c14 0%,#1a0a00 100%)",icon:"\uD83D\uDE31",om:null,title:"Oh no. Your phone just cracked.",visual:"\uD83D\uDCF1\uD83D\uDCA5",text:"You drop your phone and the screen shatters. <strong>No insurance, no backup phone.</strong> As a consultant you need it fixed \u2014 today.<br><br>Luckily, a friend just texted you: <em>\"There's this shop downtown, RepairHub. Super fast, totally legit.\"</em>",choices:[{emoji:"\uD83D\uDEB6",main:"Head to RepairHub",sub:"Let\u2019s see what this place is about",next:1}]},
+{bg:"linear-gradient(135deg,#0a0c14 0%,#0a1628 100%)",icon:"\uD83C\uDFEA",om:"OM concept: Arrival Queue (Buffer)",title:"You arrive at RepairHub.",visual:"\uD83C\uDFD9\uFE0F\uD83D\uDEB6\u200D\u2642\uFE0F\u27A1\uFE0F\uD83C\uDFEA",text:"The store is clean and modern. A few people are ahead of you. <strong>A short queue forms at the entrance counter</strong> \u2014 this is the arrival buffer, holding customers until the counter is free.<br><br>There\u2019s no long line. You wait about <strong>3 minutes</strong>.",choices:[{emoji:"\u27A1\uFE0F",main:"Walk up to the counter",sub:"It's your turn",next:2}]},
+{bg:"linear-gradient(135deg,#0a0c14 0%,#00101a 100%)",icon:"\uD83D\uDCF7",om:"OM concept: Activity \u2014 Registration & AI Diagnosis",title:"Place your phone under the camera.",visual:"\uD83D\uDCF1\uD83D\uDD0D\uD83D\uDCBB",text:"The counter has a <strong>built-in camera and a touchscreen tablet</strong>. You place your cracked phone under the camera. The system scans it instantly.<br><br>On the tablet you confirm: <strong>Samsung Galaxy S24</strong>. You tap the damage type: <em>Cracked screen</em>. The AI cross-references the camera image with your selection.",choices:[{emoji:"\u2705",main:"Confirm: Samsung Galaxy S24, cracked screen",sub:"The system recognises your model automatically",next:3}]},
+{bg:"linear-gradient(135deg,#0a0c14 0%,#0d0a1f 100%)",icon:"\uD83E\uDD16",om:"OM concept: AI Diagnosis + Inventory Check (ROP) + VUT Queueing",title:"The AI is running its checks\u2026",visual:"\u2699\uFE0F\uD83D\uDD04\uD83D\uDCE6",text:"In a few seconds, the AI does three things internally:<br><br><strong>1. Identifies the repair</strong> \u2014 screen replacement, ~55 min processing time.<br><strong>2. Checks spare-part stock</strong> \u2014 uses a Reorder Point (ROP) model. Your screen part is in stock \u2705<br><strong>3. Calculates your wait</strong> \u2014 current queue + your repair time = estimated completion.",infoBox:[{label:"Repair type",val:"Screen replacement",cls:"val-blue"},{label:"Processing time (p_i)",val:"55 min",cls:""},{label:"Part in stock?",val:"\u2705 Yes (qty: 4)",cls:"val-green"},{label:"Technicians available",val:"3 working",cls:""},{label:"Current queue wait (W_q)",val:"~18 min",cls:"val-orange"},{label:"Estimated total wait",val:"~73 min",cls:"val-orange"}],choices:[{emoji:"\uD83D\uDC40",main:"See your quote",sub:"The system now shows you the offer",next:4}]},
+{bg:"linear-gradient(135deg,#0a0c14 0%,#0a1a0a 100%)",icon:"\uD83D\uDCAC",om:"OM concept: Customer Decision Point \u2014 the only branch in the process",title:"Here\u2019s your personalised quote.",visual:"\uD83D\uDCCB\u2728",text:"The tablet shows you the full offer. <strong>What do you want to do?</strong>",infoBox:[{label:"Repair",val:"Screen replacement \u2014 Samsung S24",cls:"val-blue"},{label:"Price",val:"\u20AC 129",cls:""},{label:"Ready by",val:"Today, ~14:45",cls:"val-green"},{label:"Part",val:"In stock \u2705",cls:"val-green"},{label:"Warranty",val:"12 months",cls:""}],choices:[{emoji:"\u26A1",main:"Yes \u2014 fix it today!",sub:"Same-day repair \u00B7 ready ~14:45 \u00B7 \u20AC129",next:5,highlight:"green"},{emoji:"\uD83D\uDCC5",main:"Book a future appointment",sub:"Part gets reserved, you choose another day",next:7},{emoji:"\u274C",main:"No thanks, I\u2019ll pass",sub:"Leave without repair",next:8}]},
+{bg:"linear-gradient(135deg,#0a0c14 0%,#0a0014 100%)",icon:"\uD83D\uDD27",om:"OM concept: Repair Queue \u2192 Technician Activity \u2192 QC",title:"Your phone is being repaired.",visual:"\uD83D\uDD27\uD83D\uDCF1\u26A1",text:"Your job enters the <strong>repair queue</strong>. A technician picks it up and gets to work. You grab a coffee nearby and get a notification on a loaner device when it\u2019s done.<br><br>The technician replaces the screen module, runs diagnostics, and hands it to quality control.",stages:["Repair Queue","Disassembly","Screen Replaced","QC & Test","Done \u2705"],activeStage:4,choices:[{emoji:"\uD83D\uDD14",main:"You got the notification \u2014 pick up your phone!",sub:"Quality control passed \u2705",next:6}]},
+{bg:"linear-gradient(135deg,#0a0c14 0%,#052e16 100%)",icon:"\uD83C\uDF89",om:"OM concept: Pickup Buffer \u2192 Satisfied Demand",title:"Your phone is fixed. Good as new.",visual:"\uD83D\uDCF1\u2728\uD83D\uDE4C",text:"You return to the store. The service advisor hands you your phone \u2014 <strong>screen perfect, warranty card inside</strong>. Total time from walk-in to pickup: <strong>91 minutes</strong>.<br><br>Same-day promise: <strong>kept</strong>. You\u2019re back online.",infoBox:[{label:"Walk-in time",val:"13:10",cls:""},{label:"Repair started",val:"13:28 (18 min queue)",cls:"val-orange"},{label:"Repair finished",val:"14:23 (55 min)",cls:""},{label:"QC passed",val:"14:31",cls:""},{label:"Pickup time",val:"14:41",cls:"val-green"},{label:"Total time",val:"91 min \u2705",cls:"val-green"},{label:"Cost",val:"\u20AC 129",cls:""}],choices:[{emoji:"\uD83D\uDD01",main:"Play again from the start",sub:"Try a different path",next:0,highlight:"green"}]},
+{bg:"linear-gradient(135deg,#0a0c14 0%,#1a0a00 100%)",icon:"\uD83D\uDCC5",om:"OM concept: Scheduled Repair Path \u2014 replenishment triggered on confirmation",title:"Appointment booked. Part reserved.",visual:"\uD83D\uDCC5\uD83D\uDCE6\uD83D\uDD12",text:"You choose Thursday 10:00. The system <strong>reserves the part immediately</strong> and triggers a replenishment order only now \u2014 because you confirmed.<br><br>No wasted inventory. You get an SMS confirmation and a reminder the day before.",infoBox:[{label:"Appointment",val:"Thursday 10:00",cls:"val-blue"},{label:"Part reserved",val:"Samsung S24 screen \u2705",cls:"val-green"},{label:"Replenishment triggered",val:"Yes \u2014 on your confirmation",cls:"val-orange"},{label:"Price",val:"\u20AC 129 (locked in)",cls:""}],choices:[{emoji:"\uD83D\uDD01",main:"Start over \u2014 try same-day path",sub:"See what happens if you approve same-day",next:0}]},
+{bg:"linear-gradient(135deg,#0a0c14 0%,#1a0000 100%)",icon:"\uD83D\uDEB6",om:null,title:"You walk away.",visual:"\uD83D\uDEB6\u200D\u2642\uFE0F\uD83D\uDCA8\uD83D\uDCF1\uD83D\uDC94",text:"You decide not to go ahead. No hard feelings \u2014 the shop loses nothing operationally. <strong>No part was reserved, no technician time was allocated.</strong><br><br>The demand simply doesn\u2019t enter the system. From an OM perspective: <em>lost demand</em>.",choices:[{emoji:"\uD83D\uDD01",main:"Try again \u2014 maybe approve this time?",sub:"Go back to the beginning",next:0}]}
+];
+let current=0;
+function render(idx,dir){
+  const scene=SCENES[idx];
+  const card=document.getElementById('scene-card');
+  card.style.opacity='0';
+  card.style.transform='translateY('+(dir>0?'12px':'-12px')+')';
+  setTimeout(()=>{
+    let html='';
+    if(scene.om) html+=`<div class="om-badge">\uD83D\uDCD0 ${scene.om}</div>`;
+    html+=`<span class="scene-icon">${scene.icon}</span>`;
+    html+=`<div class="scene-title">${scene.title}</div>`;
+    if(scene.visual) html+=`<span class="scene-visual">${scene.visual}</span>`;
+    html+=`<p class="scene-text">${scene.text}</p>`;
+    if(scene.infoBox){
+      html+='<div class="info-box">';
+      scene.infoBox.forEach(r=>{html+=`<div class="row"><span class="label">${r.label}</span><span class="val ${r.cls}">${r.val}</span></div>`;});
+      html+='</div>';
+    }
+    if(scene.stages){
+      html+='<div class="repair-stages">';
+      scene.stages.forEach((s,i)=>{const c=i<scene.activeStage?'done':i===scene.activeStage?'active':'';html+=`<div class="stage ${c}">${s}</div>`;});
+      html+='</div>';
+    }
+    html+='<div id="choices">';
+    scene.choices.forEach(c=>{const cls=c.highlight==='green'?'choice-btn green-btn':'choice-btn';html+=`<button class="${cls}" onclick="go(${c.next},1)"><span class="emoji">${c.emoji}</span><span class="text"><span class="main">${c.main}</span><span class="sub">${c.sub}</span></span></button>`;});
+    html+='</div>';
+    card.innerHTML=html;
+    const pct=Math.round((idx/(SCENES.length-1))*100);
+    document.getElementById('prog-fill').style.width=pct+'%';
+    document.getElementById('prog-step').textContent=`Step ${idx+1} of ${SCENES.length}`;
+    document.getElementById('prog-pct').textContent=pct+'%';
+    const dotsEl=document.getElementById('dots');
+    dotsEl.innerHTML='';
+    SCENES.forEach((_,i)=>{const d=document.createElement('div');d.className='dot'+(i===idx?' active':i<idx?' done':'');dotsEl.appendChild(d);});
+    document.getElementById('bg-img').style.background=scene.bg;
+    card.style.transition='opacity .35s ease, transform .35s ease';
+    requestAnimationFrame(()=>{card.style.opacity='1';card.style.transform='translateY(0)';});
+  },300);
+}
+function go(idx,dir){current=idx;render(idx,dir);}
+render(0);
+</script>
+</body>
+</html>
